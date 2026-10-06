@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuickNotes | Day 4</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-content">
+        <p class="eyebrow">DAY 04 / QUICKNOTES</p>
+        <h1>QuickNotes</h1>
+        <p class="tagline">A quiet space to get thoughts out of your head.</p>
+      </div>
+    </header>
+
+    <main>
+      <section class="note-panel" aria-labelledby="note-heading">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">YOUR DRAFT</p>
+            <h2 id="note-heading">Write it down.</h2>
+          </div>
+          <button id="theme-toggle" class="secondary-button" type="button">Dark mode</button>
+        </div>
+
+        <label for="note-text">Note</label>
+        <textarea id="note-text" rows="8" placeholder="Start with one thought..." aria-describedby="char-count word-count"></textarea>
+
+        <div class="counter-row">
+          <p id="char-count" aria-live="polite">0 / 200 characters</p>
+          <p id="word-count" aria-live="polite">0 words</p>
+        </div>
+
+        <button id="clear-btn" type="button">Clear</button>
+      </section>
+    </main>
+
+    <footer>
+      <p>QuickNotes · Keep what matters.</p>
+    </footer>
+  </body>
+</html>
