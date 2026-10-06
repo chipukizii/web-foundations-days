@@ -6,8 +6,6 @@ let notes = [
   { id: 5, text: "Call mum", category: "personal" },
 ];
 
-const CATEGORIES = ["personal", "work", "study"];
-
 function searchNotes(word) {
   const searchWord = word.toLowerCase();
   return notes.filter(note => note.text.toLowerCase().includes(searchWord));
@@ -16,7 +14,6 @@ function searchNotes(word) {
 function longestNote() {
   if (notes.length === 0) return null;
 
-  // Keep the longest note found so far.
   let longest = notes[0];
   for (const note of notes) {
     if (note.text.length > longest.text.length) longest = note;
@@ -31,57 +28,63 @@ function countByCategory() {
 }
 
 function getSummary() {
+  if (notes.length === 0) return "0 notes: no notes.";
+
   const counts = countByCategory();
-  const word = notes.length === 1 ? "note" : "notes";
-  return `${notes.length} ${word}: ` +
-    `${counts.personal} personal, ${counts.work} work, ${counts.study} study.`;
+  const categories = ["personal", "work", "study"];
+  const details = categories.filter(category => counts[category] > 0)
+    .map(category => `${counts[category]} ${category}`)
+    .join(", ");
+  return `${notes.length} ${notes.length === 1 ? "note" : "notes"}: ${details}.`;
 }
 
 function isDuplicate(text) {
-  const cleaned = text.trim().toLowerCase();
-  return notes.some(note => note.text.toLowerCase() === cleaned);
+  return notes.some(note =>
+    note.text.trim().toLowerCase() === text.trim().toLowerCase()
+  );
 }
 
 function addNote(text, category) {
-  const cleaned = text.trim();
+  const cleanText = text.trim();
+  const categories = ["personal", "work", "study"];
 
-  if (cleaned.length === 0 || cleaned.length > 200) {
-    console.log("Rejected: a note must be 1-200 characters.");
+  if (cleanText.length < 1 || cleanText.length > 200) {
+    console.log("Not added: text must be 1 to 200 characters.");
     return false;
   }
-  if (isDuplicate(cleaned)) {
-    console.log(`Rejected: "${cleaned}" already exists.`);
+  if (!categories.includes(category)) {
+    console.log("Not added: category must be personal, work or study.");
     return false;
   }
-  if (!CATEGORIES.includes(category)) {
-    console.log(`Rejected: "${category}" is not a valid category.`);
+  if (isDuplicate(cleanText)) {
+    console.log("Not added: this note already exists.");
     return false;
   }
 
-  notes.push({ id: Date.now(), text: cleaned, category: category });
-  console.log(`Added: "${cleaned}" (${category})`);
+  notes.push({ id: notes.length + 1, text: cleanText, category });
   return true;
 }
 
-console.log(searchNotes("revise")); // Expected: note 4
-console.log(searchNotes("BREAD")); // Expected: note 1
-console.log(searchNotes("holiday")); // Expected: []
-console.log(longestNote().text); // Expected: "Email the project report to Grace"
+console.log(searchNotes("MILK")); // Expected: [{ id: 1, text: "Buy milk and bread", category: "personal" }]
+console.log(searchNotes("unmatched")); // Expected: []
+console.log(longestNote()); // Expected: note 3, "Email the project report to Grace"
 
 const starterNotes = notes;
 notes = [];
 console.log(longestNote()); // Expected: null
 console.log(countByCategory()); // Expected: { personal: 0, work: 0, study: 0 }
-console.log(getSummary()); // Expected: "0 notes: 0 personal, 0 work, 0 study."
+console.log(getSummary()); // Expected: "0 notes: no notes."
 notes = starterNotes;
 console.log(countByCategory()); // Expected: { personal: 2, work: 1, study: 2 }
 console.log(getSummary()); // Expected: "5 notes: 2 personal, 1 work, 2 study."
+notes = [starterNotes[0]];
+console.log(getSummary()); // Expected: "1 note: 1 personal."
+notes = starterNotes;
 
-console.log(isDuplicate("  call MUM ")); // Expected: true
-console.log(isDuplicate("Call dad")); // Expected: false
+console.log(isDuplicate("  BUY MILK AND BREAD  ")); // Expected: true
+console.log(isDuplicate("Read a book")); // Expected: false
 
-console.log(addNote("Read chapter 4", "study")); // Expected: Added message, then true
-console.log(addNote("call mum", "personal")); // Expected: Rejected duplicate, then false
-console.log(addNote("   ", "work")); // Expected: Rejected length, then false
-console.log(addNote("Plan trip", "holiday")); // Expected: Rejected category, then false
-console.log(getSummary()); // Expected: "6 notes: 2 personal, 1 work, 3 study."
+console.log(addNote("Plan the weekend", "personal")); // Expected: true
+console.log(addNote("  ", "personal")); // Expected: false, with a text-length reason
+console.log(addNote("Plan a trip", "travel")); // Expected: false, with a category reason
+console.log(addNote("plan THE weekend", "personal")); // Expected: false, with a duplicate reason
